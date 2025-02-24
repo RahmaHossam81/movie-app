@@ -12,7 +12,8 @@ class AppAssets{
   static const String americaFlag = "assets/images/america_flag.png";
   static const String logo = "assets/images/logo.png";
   static const String AvailableNow = "assets/images/Available Now.png";
-      static const String WatchNow = "assets/images/Watch Now.png";
+  static const String WatchNow = "assets/images/Watch Now.png";
+  static const String Video = "assets/images/video.png";
 
 
 

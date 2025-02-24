@@ -18,11 +18,11 @@ class AppStyles{
   );
 
   static TextStyle regular20white = GoogleFonts.inter(
-      fontSize: 20, fontWeight: FontWeight.w400, color: AppColors.white
+      fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.white
   );
 
   static TextStyle regular16white = GoogleFonts.inter(
-      fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.white
+      fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.white
   );
 
   static TextStyle regular14white = GoogleFonts.inter(
