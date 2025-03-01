@@ -14,6 +14,7 @@ class AppAssets{
   static const String AvailableNow = "assets/images/Available Now.png";
   static const String WatchNow = "assets/images/Watch Now.png";
   static const String Video = "assets/images/video.png";
+  static const String Empty = "assets/images/Empty.png";
 
 
 

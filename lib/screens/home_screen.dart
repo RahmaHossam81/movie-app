@@ -26,11 +26,30 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void fetchMovies() {
-    availableNowMovies = ApiService.fetchMovies(AppLinksApi.getMoviesAvailableNow);
+    availableNowMovies =
+        ApiService.fetchMovies(AppLinksApi.getMoviesAvailableNow);
     allMovies = ApiService.fetchMovies(AppLinksApi.getALlMovies);
   }
 
   int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 1:
+        Navigator.pushNamed(context, '/search');
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/movies_by_genre');
+        break;
+      case 3:
+        Navigator.pushNamed(context, 'Profile');
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,17 +69,17 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pushNamed(context, "/search");
               break;
             case 2:
-              Navigator.pushNamed(context, "/explore");
+              Navigator.pushNamed(context, "/browse");
               break;
             case 3:
-              Navigator.pushNamed(context, "/profile");
+              Navigator.pushNamed(context, "Profile");
               break;
           }
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: "Explore"),
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: "browse"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
@@ -139,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   Center(
                     child: Image.asset(AppAssets.WatchNow, width: 354),
                   ),
@@ -182,6 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
+                  SizedBox(height: 10,),
                   Expanded(
                     child: FutureBuilder<List<Movies>>(
                       future: allMovies,

@@ -83,136 +83,138 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(AppAssets.logo, height: 100),
-              const SizedBox(height: 32),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(AppAssets.logo, height: 100),
+                const SizedBox(height: 32),
 
-              // Email Field
-              TextField(
-                controller: _emailController,
-                style: AppStyles.regular16white,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: AppColors.gray,
-                  hintText: 'Email',
-                  prefixIcon: Icon(Icons.email, color: AppColors.white),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Password Field
-              TextField(
-                controller: _passwordController,
-                obscureText: !_isPasswordVisible,
-                style: AppStyles.regular16white,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: AppColors.gray,
-                  hintText: 'Password',
-                  prefixIcon: Icon(Icons.lock, color: AppColors.white),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                      color: AppColors.white,
+                // Email Field
+                TextField(
+                  controller: _emailController,
+                  style: AppStyles.regular16white,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: AppColors.gray,
+                    hintText: 'Email',
+                    prefixIcon: Icon(Icons.email, color: AppColors.white),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
                     ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Password Field
+                TextField(
+                  controller: _passwordController,
+                  obscureText: !_isPasswordVisible,
+                  style: AppStyles.regular16white,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: AppColors.gray,
+                    hintText: 'Password',
+                    prefixIcon: Icon(Icons.lock, color: AppColors.white),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: AppColors.white,
+                      ),
+                      onPressed: () {
+                        setState(() => _isPasswordVisible = !_isPasswordVisible);
+                      },
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // Forget Password
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
                     onPressed: () {
-                      setState(() => _isPasswordVisible = !_isPasswordVisible);
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => ForgetPasswordScreen(),
+                      ));
                     },
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
+                    child: Text('Forget Password ?', style: AppStyles.regular14yallow),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
+                const SizedBox(height: 16),
 
-              // Forget Password
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => ForgetPasswordScreen(),
-                    ));
-                  },
-                  child: Text('Forget Password ?', style: AppStyles.regular14yallow),
+                // Login Button
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _signInWithEmailAndPassword,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.yallow,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    minimumSize: Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? CircularProgressIndicator(color: AppColors.white)
+                      : Text('Login', style: AppStyles.bold20balck),
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Login Button
-              ElevatedButton(
-                onPressed: _isLoading ? null : _signInWithEmailAndPassword,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.yallow,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  minimumSize: Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                // Signup Navigation
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Don't Have Account ?", style: AppStyles.regular14white),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => RegisterScreen()),
+                        );
+                      },
+                      child: Text('Create One', style: AppStyles.bold20yallow),
+                    ),
+                  ],
                 ),
-                child: _isLoading
-                    ? CircularProgressIndicator(color: AppColors.white)
-                    : Text('Login', style: AppStyles.bold20balck),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Signup Navigation
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Don't Have Account ?", style: AppStyles.regular14white),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegisterScreen()),
-                      );
-                    },
-                    child: Text('Create One', style: AppStyles.bold20yallow),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              // OR Divider
-              Row(
-                children: [
-                  Expanded(child: Divider(color: AppColors.gray, thickness: 1)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('OR', style: AppStyles.regular14white),
-                  ),
-                  Expanded(child: Divider(color: AppColors.gray, thickness: 1)),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              // Google Sign-In Button
-              ElevatedButton.icon(
-                onPressed: _isLoading ? null : _signInWithGoogle,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.yallow,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  minimumSize: Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                // OR Divider
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: AppColors.gray, thickness: 1)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text('OR', style: AppStyles.regular14white),
+                    ),
+                    Expanded(child: Divider(color: AppColors.gray, thickness: 1)),
+                  ],
                 ),
-                icon: Icon(Icons.g_translate, color: AppColors.black),
-                label: _isLoading
-                    ? CircularProgressIndicator(color: AppColors.white)
-                    : Text('Login With Google', style: AppStyles.bold20balck),
-              ),
-              const SizedBox(height: 16),
-            ],
+                const SizedBox(height: 16),
+
+                // Google Sign-In Button
+                ElevatedButton.icon(
+                  onPressed: _isLoading ? null : _signInWithGoogle,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.yallow,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    minimumSize: Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  icon: Icon(Icons.g_translate, color: AppColors.black),
+                  label: _isLoading
+                      ? CircularProgressIndicator(color: AppColors.white)
+                      : Text('Login With Google', style: AppStyles.bold20balck),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),

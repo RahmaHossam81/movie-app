@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movie/screens/home_screen.dart';
 import 'package:movie/screens/login_screen.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:movie/utils/app_colors.dart';
 import 'package:movie/utils/app_styles.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = "/register";
@@ -23,12 +24,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isConfirmPasswordVisible = false;
   String selectedAvatarKey = "user0"; // الأفاتار الافتراضي
 
-  void _registerUser() async {
+  Future<void> _registerUser() async {
+    String name = _nameController.text.trim();
+    String phone = _phoneController.text.trim();
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
     String confirmPassword = _confirmPasswordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (name.isEmpty || phone.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please fill all fields")),
       );
@@ -43,14 +46,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // ✅ تسجيل ناجح، توجيه المستخدم إلى صفحة تسجيل الدخول
-      Navigator.pushNamed(context, HomeScreen.routeName);
+      User? user = userCredential.user;
 
+      if (user != null) {
+        // ✅ حفظ بيانات المستخدم في Firestore
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'uid': user.uid,
+          'name': name,
+          'phone': phone,
+          'email': email,
+          'avatarUrl': "https://api.dicebear.com/7.x/adventurer/svg?seed=$selectedAvatarKey", // توليد الأفاتار بناءً على المفتاح المختار
+        });
+
+        print("✅ تم حفظ بيانات المستخدم في Firestore");
+
+        // ✅ الانتقال إلى الصفحة الرئيسية بعد التسجيل
+        Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Registration Failed: ${e.toString()}")),
@@ -86,12 +103,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             // ✅ قائمة أفاتارات قابلة للتمرير الأفقي
             SizedBox(
-              height: 90, // زيادة الطول قليلًا حتى يكون واضحًا
+              height: 90,
               child: ListView.builder(
-                scrollDirection: Axis.horizontal, // جعل التمرير أفقيًا
-                itemCount: 50, // عدد الأفاتارات المتاحة
+                scrollDirection: Axis.horizontal,
+                itemCount: 50,
                 itemBuilder: (context, index) {
-                  String avatarKey = "user$index"; // مفتاح فريد لكل أفاتار
+                  String avatarKey = "user$index";
                   bool isSelected = selectedAvatarKey == avatarKey;
 
                   return GestureDetector(
@@ -106,7 +123,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                       child: CircleAvatar(
-                        radius: isSelected ? 40 : 30, // تكبير الأفاتار المختار
+                        radius: isSelected ? 40 : 30,
                         backgroundColor: Colors.transparent,
                         child: RandomAvatar(avatarKey, height: isSelected ? 70 : 50, width: isSelected ? 70 : 50),
                       ),
@@ -118,7 +135,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             const SizedBox(height: 20),
 
-            // الحقول
             _buildTextField(_nameController, "Name", Icons.person),
             const SizedBox(height: 16),
             _buildTextField(_emailController, "Email", Icons.email),
@@ -137,7 +153,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             // زر إنشاء الحساب
             ElevatedButton(
-              onPressed: _registerUser, // ✅ استدعاء دالة التسجيل
+              onPressed: _registerUser,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.yallow,
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -172,7 +188,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // دالة لإنشاء حقل نصي
   Widget _buildTextField(TextEditingController controller, String hint, IconData icon) {
     return TextField(
       controller: controller,
@@ -190,7 +205,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // دالة لإنشاء حقل كلمة المرور مع إظهار/إخفاء النص
   Widget _buildPasswordField(TextEditingController controller, String hint, bool isVisible, Function(bool) onToggle) {
     return TextField(
       controller: controller,
